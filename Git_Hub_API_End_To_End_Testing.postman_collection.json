@@ -1,0 +1,352 @@
+{
+	"info": {
+		"_postman_id": "6a1be222-8634-4016-8fda-162dc9971520",
+		"name": "Git_Hub_API_End_To_End_Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get_All_Repos_Dtls",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c9b81d01-fb7c-43e8-9b38-6b2183808843",
+						"exec": [
+							"tests[\"validate status code \"]=responseCode.code==200;",
+							"",
+							"// validate response body and extract repo full name transfer data to next request ",
+							"var response=JSON.parse(responseBody);",
+							"tests[\"validate the single repo id\"]=response.id==188739720;",
+							"tests[\"validate repo owner username\"]=response.owner.login=\"hal0998\";",
+							"tests[\"validate owner id\"]=response.owner.id==43451977;",
+							"",
+							"var indrepoName=response.full_name;",
+							"var repoid=response.id;",
+							"var ownid=response.owner.id;",
+							"",
+							"pm.globals.set(\"repofullName\",indrepoName);",
+							"pm.globals.set(\"repositoryId\",repoid)",
+							"pm.globals.set(\"ownerId\",ownid);",
+							"",
+							"// validate headers ",
+							"pm.test(\"validate content-type\",function(){",
+							"",
+							"pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\");",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e3e78b1e-861d-496d-90a5-50017365918b",
+						"exec": [
+							"pm.test(\"Set individual repo name\",function(){",
+							"",
+							"pm.globals.set(\"repofullName\",\"abc\");",
+							"pm.globals.set(\"repositoryId\",21212);",
+							"pm.globals.set(\"ownerId\",1223);",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "ee963bd8c422ad2a9ab0fc362fe352d686ab17a5",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Url}}/repos/hal0998/Testing",
+					"host": [
+						"{{Url}}"
+					],
+					"path": [
+						"repos",
+						"hal0998",
+						"Testing"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_Ind_repo_Dtls",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dcb6d44a-057a-4d70-a870-4df3f0b7fda1",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "884d785a-6c1e-44e8-b28b-f4568bd052bf",
+						"exec": [
+							"tests[\"validate status code\"]=responseCode.code==200;",
+							"",
+							"// validate response body",
+							"var response=JSON.parse(responseBody);",
+							"",
+							"var repoid=pm.globals.get(\"repositoryId\");",
+							"",
+							"tests[\"validate repoid\"]=response.id==repoid;",
+							"tests[\"validate owner id\"]=response.owner.id==pm.globals.get(\"ownerId\");",
+							"",
+							"// validate headers",
+							"pm.test(\"validate response headers\",function(){",
+							"",
+							"pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\");",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ee963bd8c422ad2a9ab0fc362fe352d686ab17a5",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Url}}/repos/{{repofullName}}",
+					"host": [
+						"{{Url}}"
+					],
+					"path": [
+						"repos",
+						"{{repofullName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update_Repo_Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "85470ee1-31e8-4802-b544-97584aebef10",
+						"exec": [
+							"tests[\"validate status code \"]=responseCode.code==200;",
+							"",
+							"var response=JSON.parse(responseBody);",
+							"",
+							"tests[\"validate repo id\"]=response.id==pm.globals.get(\"repositoryId\");",
+							"tests[\"validate owner id\"]=response.owner.id==pm.globals.get(\"ownerId\");",
+							"",
+							"pm.test(\"validate request headers\",function(){",
+							"",
+							"pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\");",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ee963bd8c422ad2a9ab0fc362fe352d686ab17a5",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n \"name\": \"ShellScript_Testing\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Url}}/repos/{{repofullName}}",
+					"host": [
+						"{{Url}}"
+					],
+					"path": [
+						"repos",
+						"{{repofullName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cereate_New_Repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9d6eb13b-504b-4b0d-9e7e-5052324f4a45",
+						"exec": [
+							"tests[\"validate status code\"]=responseCode.code==201;",
+							"",
+							"var response=JSON.parse(responseBody);",
+							"tests[\"validate owner id\"]=response.owner.id==pm.globals.get(\"ownerId\");",
+							"",
+							"pm.test(\"validate request headers\",function(){",
+							"",
+							"pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json; charset=utf-8\");",
+							"",
+							"});",
+							"",
+							"var fullname=response.full_name;",
+							"pm.globals.set(\"repofullName\",fullname);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ee963bd8c422ad2a9ab0fc362fe352d686ab17a5",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n\"name\": \"Repo_Created_By_API\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Url}}/user/repos",
+					"host": [
+						"{{Url}}"
+					],
+					"path": [
+						"user",
+						"repos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_Repo",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ee963bd8c422ad2a9ab0fc362fe352d686ab17a5",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{Url}}/repos/{{repofullName}}",
+					"host": [
+						"{{Url}}"
+					],
+					"path": [
+						"repos",
+						"{{repofullName}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "aa631c08-a012-4953-bea8-aa26fec90d67",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Set Up domain namin in collection level\",function(){",
+					"",
+					"var url=\"https://api.github.com\";",
+					"pm.globals.set(\"Url\",url);",
+					"",
+					"console.log(\"The Domain name is \"+url);",
+					"",
+					"",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "05fd933b-c891-4ab0-a193-4c560dec1d33",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
